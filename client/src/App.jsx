@@ -19,6 +19,7 @@ function App() {
     <Route path="/test" element={<Passenger/>}></Route> 
     <Route path="/data" element={<CsvUploader/>}></Route>
     <Route path="/graph" element={<Statistics/>}></Route>
+    <Route path="/map" element={<Passenger/>}></Route>
     </Routes>
     </BrowserRouter>
   )
