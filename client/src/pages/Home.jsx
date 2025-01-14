@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import Slide from '../components/Slide';
+import { Link } from 'react-router-dom';
 
 const HomePage = () => {
   const [hovered, setHovered] = useState(null); // State to track which button is hovered
@@ -105,9 +106,11 @@ const HomePage = () => {
               onMouseEnter={() => handleMouseEnter('map')}
               onMouseLeave={handleMouseLeave}
             >
+              <Link to='/map'>
               <button className="btn bg-blue-600 text-white py-2 px-4 rounded-full border-2 hover:bg-white border-blue-600 hover:text-blue-600 transition-all duration-300 ease-in-out font-semibold">
                 MAP
               </button>
+              </Link>
             </div>
           </div>
         </div>
