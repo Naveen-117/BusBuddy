@@ -9,6 +9,7 @@ const csvParser = require('csv-parser');
 const fs = require('fs');
 
 
+
 const StopModel=require('./model/Stops')
 const Fair_AttributesModel = require("./model/Fare_Attributes");
 const Stop_TimesModel = require("./model/Stop_Times");
@@ -16,6 +17,7 @@ const Fair_RulesModel = require("./model/Fair_Rules");
 const RoutesModel = require("./model/Routes");
 const TripsModel = require("./model/Trips");
 const bcryptjs = require('bcryptjs');
+const dashboardRoutes = require('./routes/dashboard');
 
 const upload = multer({ dest: 'uploads/' });
 
@@ -228,6 +230,7 @@ app.post('/api/points', (req, res) => {
   
   const statisticsRoutes = require('./routes/statistics'); 
   app.use('/api/statistics', statisticsRoutes);
+  app.use('/api/dashboard', dashboardRoutes);
 
 
 app.listen(3001,()=>{
