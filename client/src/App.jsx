@@ -8,6 +8,7 @@ import Signup from './pages/Signup'
 import CsvUploader from './pages/CsvUploader'
 import Passenger from './components/Passenger'
 import Statistics from './pages/Statistics'
+import StatisticsPage from './pages/StatisticsPage'
 function App() {
   return (
     <BrowserRouter>
@@ -20,6 +21,7 @@ function App() {
     <Route path="/data" element={<CsvUploader/>}></Route>
     <Route path="/graph" element={<Statistics/>}></Route>
     <Route path="/map" element={<Passenger/>}></Route>
+    <Route path="/statistics" element={<StatisticsPage />} />
     </Routes>
     </BrowserRouter>
   )

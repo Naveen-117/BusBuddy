@@ -14,7 +14,7 @@ const Navbar = () => {
       <li className='text-slate-700 rounded-md px-2 py-1 transition-hover duration-300 hover:bg-white hover:text-blue-800 font-semibold'>Home</li>
       </Link>
       
-      <Link to='/graph'>
+      <Link to='/statistics'>
           <li className='text-slate-700 rounded-md px-2 py-1 transition-hover duration-300 hover:bg-white hover:text-blue-800 font-semibold'>Statistics</li>
         </Link>
       <Link to='/'>

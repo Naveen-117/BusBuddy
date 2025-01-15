@@ -226,13 +226,8 @@ app.post('/api/points', (req, res) => {
   });
   
   
-  
-  
-  
-  
-  
-  
-  
+  const statisticsRoutes = require('./routes/statistics'); 
+  app.use('/api/statistics', statisticsRoutes);
 
 
 app.listen(3001,()=>{
