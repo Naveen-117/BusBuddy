@@ -7,6 +7,13 @@ const router = express.Router();
 const multer = require('multer');
 const csvParser = require('csv-parser');
 const fs = require('fs');
+const bodyParser = require('body-parser');
+const { Buffer } = require('buffer');
+const protobuf = require('protobufjs');
+const { parse } = require('json2csv');
+const zlib = require("zlib");
+
+
 
 
 
@@ -18,7 +25,6 @@ const RoutesModel = require("./model/Routes");
 const TripsModel = require("./model/Trips");
 const bcryptjs = require('bcryptjs');
 const dashboardRoutes = require('./routes/dashboard');
-
 const upload = multer({ dest: 'uploads/' });
 
 
@@ -228,9 +234,51 @@ app.post('/api/points', (req, res) => {
   });
   
   
+  
   const statisticsRoutes = require('./routes/statistics'); 
   app.use('/api/statistics', statisticsRoutes);
   app.use('/api/dashboard', dashboardRoutes);
+  
+ // index.js - Add this mock endpoint
+
+// Mock data generator function
+function generateMockVehicleData() {
+  const vehicles = [];
+  const vehicleCount = 10;
+  
+  for (let i = 0; i < vehicleCount; i++) {
+    vehicles.push({
+      vehicle_id: `DL${Math.floor(1000 + Math.random() * 9000)}`,
+      trip_id: `TRIP_${Math.floor(1000 + Math.random() * 9000)}`,
+      timestamp: new Date().toISOString(),
+      // Delhi approximate bounds
+      latitude: 28.5 + (Math.random() * 0.3),
+      longitude: 77.0 + (Math.random() * 0.3),
+      speed: Math.floor(20 + Math.random() * 40),
+      bearing: Math.floor(Math.random() * 360)
+    });
+  }
+  
+  return { vehicles };
+}
+
+// Mock endpoint
+app.get("/api/vehicle-positions", (req, res) => {
+  try {
+    const mockData = generateMockVehicleData();
+    res.json(mockData);
+  } catch (error) {
+    console.error("Error generating mock data:", error);
+    res.status(500).json({ error: error.message });
+  }
+});
+  
+  
+  
+  
+  
+  
+
 
 
 app.listen(3001,()=>{

@@ -13,6 +13,8 @@ import Dashboard from './pages/Dashboard'
 import StopsStats from './pages/StopsStats'
 import TripsStats from './pages/TripsStats'
 import RoutesStats from './pages/RoutesStats'
+import Real from './pages/Real'
+
 function App() {
   return (
     <BrowserRouter>
@@ -30,6 +32,7 @@ function App() {
     <Route path="/stops-stats" element={<StopsStats />} />
     <Route path="/trips-stats" element={<TripsStats />} />
     <Route path="/routes-stats" element={<RoutesStats />} />
+    <Route path="/real" element={<Real />} />
     </Routes>
     </BrowserRouter>
   )
