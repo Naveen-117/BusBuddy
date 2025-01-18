@@ -241,7 +241,7 @@ app.post('/api/points', (req, res) => {
   
   const createCsvWriter = require('csv-writer').createObjectCsvWriter;
   const path = require('path');
-  
+  const { execFile } = require("child_process");
   // Load the .proto file
 
 // Load the .proto file
@@ -256,72 +256,28 @@ protobuf.load(path.join(__dirname, 'vehicle_positions.proto'), (err, root) => {
   const FeedMessage = root.lookupType('transit_realtime.FeedMessage');
 
   // In index.js, modify the /api/vehicle-positions endpoint:
-  app.get('/api/vehicle-positions', async (req, res) => {
-    try {
-      console.log('Fetching vehicle positions...');
-      
-      const response = await axios({
-        url: 'https://otd.delhi.gov.in/api/realtime/VehiclePositions.pb?key=LdE6xTDPS0mjLc65Kw0sRttaz5iLUMgG',
-        method: 'GET',
-        responseType: 'arraybuffer',
-        timeout: 10000,
-        headers: {
-          'Accept-Encoding': '*'
-        }
-      });
+  app.get('/api/vehicle-positions', (req, res) => {
+    console.log("Fetching vehicle positions using Python script...");
   
-      console.log('Received response, data length:', response.data.length);
+    // Call the Python script
+    execFile("python3", ["vehicle_positions.py"], (error, stdout, stderr) => {
+      if (error) {
+        console.error("Error executing Python script:", error.message);
+        res.status(500).json({ error: "Internal Server Error", details: error.message });
+        return;
+      }
+      if (stderr) {
+        console.error("Python script error output:", stderr);
+      }
   
-      // Decode the protobuf message
-      const message = FeedMessage.decode(new Uint8Array(response.data));
-      const decodedMessage = FeedMessage.toObject(message, {
-        enums: String,
-        longs: String,
-        bytes: String,
-        defaults: true,
-        arrays: true,
-        objects: true,
-        oneofs: true,
-      });
-  
-      console.log('Successfully decoded protobuf message');
-  
-      // Debugging each entity
-      const entities = decodedMessage.entity;
-      entities.forEach((entity, index) => {
-        console.log(`Entity ${index + 1}:`, JSON.stringify(entity, null, 2));
-        if (!entity.vehicle) {
-          console.warn(`Entity ${entity.id || index} is missing vehicle details.`);
-        }
-        if (!entity.vehicle?.trip) {
-          console.warn(`Entity ${entity.id || index} has no trip details.`);
-        }
-        if (!entity.vehicle?.position) {
-          console.warn(`Entity ${entity.id || index} has no position details.`);
-        }
-      });
-  
-      // Map entities
-      const vehiclePositions = decodedMessage.entity.map(entity => ({
-        entity_id: entity.id || 'Unknown',
-        trip_id: entity.vehicle?.trip?.tripId || 'No Trip ID',
-        route_id: entity.vehicle?.trip?.routeId || 'No Route ID',
-        latitude: entity.vehicle?.position?.latitude || 0.0,
-        longitude: entity.vehicle?.position?.longitude || 0.0,
-        speed: entity.vehicle?.position?.speed || 0.0,
-        timestamp: entity.vehicle?.timestamp || 'No Timestamp',
-        vehicle_id: entity.vehicle?.vehicle?.id || 'No Vehicle ID',
-        vehicle_label: entity.vehicle?.vehicle?.label || 'No Label'
-      }));
-      
-  
-      console.log(`Processed ${vehiclePositions.length} vehicle positions`);
-      res.json(vehiclePositions);
-  
-    } catch (error) {
-      console.error('Error in /api/vehicle-positions:', error.message);
-      res.status(500).json({ error: 'Internal Server Error', details: error.message });
-    }
+      try {
+        const data = JSON.parse(stdout); // Parse JSON output from the script
+        res.json(data); // Send the data to the frontend
+      } catch (parseError) {
+        console.error("Error parsing Python script output:", parseError.message);
+        res.status(500).json({ error: "Internal Server Error", details: parseError.message });
+      }
+    });
   });
   
   

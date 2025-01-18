@@ -9,33 +9,32 @@ message FeedMessage {
 
 message FeedHeader {
   required string gtfs_realtime_version = 1;
+  optional uint64 timestamp = 2;
+  optional Incrementality incrementality = 3 [default = FULL_DATASET];
   enum Incrementality {
     FULL_DATASET = 0;
     DIFFERENTIAL = 1;
   }
-  optional Incrementality incrementality = 2 [default = FULL_DATASET];
-  optional uint64 timestamp = 3;
 }
 
 message FeedEntity {
   required string id = 1;
   optional bool is_deleted = 2 [default = false];
-  optional VehiclePosition vehicle = 3;
+  optional VehiclePosition vehicle = 3; // Ensure this maps correctly to the vehicle field
 }
 
 message TripDescriptor {
   optional string trip_id = 1;
   optional string route_id = 2;
-  optional string direction_id = 3;
-  optional string start_time = 4;
-  optional string start_date = 5;
+  optional string start_time = 3;
+  optional string start_date = 4;
+  optional ScheduleRelationship schedule_relationship = 5;
   enum ScheduleRelationship {
     SCHEDULED = 0;
     ADDED = 1;
     UNSCHEDULED = 2;
     CANCELED = 3;
   }
-  optional ScheduleRelationship schedule_relationship = 6;
 }
 
 message VehicleDescriptor {
@@ -45,42 +44,23 @@ message VehicleDescriptor {
 }
 
 message Position {
-  required float latitude = 1;
-  required float longitude = 2;
-  optional float bearing = 3;
-  optional double odometer = 4;
-  optional float speed = 5;
+  optional float latitude = 1;
+  optional float longitude = 2;
+  optional float speed = 3;
+  optional float bearing = 4;
+  optional double odometer = 5;
 }
 
 message VehiclePosition {
-  optional TripDescriptor trip = 1;
-  optional VehicleDescriptor vehicle = 2;
-  optional Position position = 3;
-  optional uint32 current_stop_sequence = 4;
+  optional TripDescriptor trip = 1; // Map trip details
+  optional VehicleDescriptor vehicle = 2; // Map vehicle details
+  optional Position position = 3; // Map position details
+  optional uint64 timestamp = 4;
   optional string stop_id = 5;
+  optional VehicleStopStatus current_status = 6 [default = IN_TRANSIT_TO];
   enum VehicleStopStatus {
     INCOMING_AT = 0;
     STOPPED_AT = 1;
     IN_TRANSIT_TO = 2;
   }
-  optional VehicleStopStatus current_status = 6 [default = IN_TRANSIT_TO];
-  optional uint64 timestamp = 7;
-  enum CongestionLevel {
-    UNKNOWN_CONGESTION_LEVEL = 0;
-    RUNNING_SMOOTHLY = 1;
-    STOP_AND_GO = 2;
-    CONGESTION = 3;
-    SEVERE_CONGESTION = 4;
-  }
-  optional CongestionLevel congestion_level = 8;
-  enum OccupancyStatus {
-    EMPTY = 0;
-    MANY_SEATS_AVAILABLE = 1;
-    FEW_SEATS_AVAILABLE = 2;
-    STANDING_ROOM_ONLY = 3;
-    CRUSHED_STANDING_ROOM_ONLY = 4;
-    FULL = 5;
-    NOT_ACCEPTING_PASSENGERS = 6;
-  }
-  optional OccupancyStatus occupancy_status = 9;
 }
