@@ -96,9 +96,11 @@ const HomePage = () => {
               onMouseEnter={() => handleMouseEnter('operations')}
               onMouseLeave={handleMouseLeave}
             >
+              <Link to='/real'>
               <button className="btn bg-blue-600 text-white py-2 px-4 rounded-full border-2 hover:bg-white border-blue-600 hover:text-blue-600 transition-all duration-300 ease-in-out font-semibold">
                 OPERATIONS
               </button>
+              </Link>
             </div>
 
             <div
