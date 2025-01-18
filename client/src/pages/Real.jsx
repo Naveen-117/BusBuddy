@@ -1,86 +1,115 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 
-const Real = () => {
-  const [vehicles, setVehicles] = useState([]);
+// Define the base URL for the API
+const API_BASE_URL = 'http://localhost:3001';
+
+function Real() {
+  const [vehiclePositions, setVehiclePositions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [lastUpdate, setLastUpdate] = useState(null);
 
   useEffect(() => {
-    const fetchVehicles = async () => {
+    const fetchData = async () => {
       try {
-        const response = await axios.get('http://localhost:3001/api/vehicle-positions');
-        setVehicles(response.data.vehicles || []);
-        setLastUpdate(new Date().toLocaleTimeString());
+        setLoading(true);
         setError(null);
-        setLoading(false);
-      } catch (err) {
-        setError(err.message);
+        
+        const response = await axios.get(`${API_BASE_URL}/api/vehicle-positions`, {
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+          },
+        });
+        console.log('Raw response data:', response.data);
+
+        // Check if response.data exists and is an array
+        if (response.data && Array.isArray(response.data)) {
+          setVehiclePositions(response.data);
+        } else {
+          throw new Error('Invalid data format received');
+        }
+      } catch (error) {
+        console.error('Error fetching vehicle positions:', error);
+        setError(error.message || 'Failed to fetch vehicle positions');
+      } finally {
         setLoading(false);
       }
     };
 
-    fetchVehicles();
-    const interval = setInterval(fetchVehicles, 10000); // Update every 10 seconds
-
-    return () => clearInterval(interval);
+    fetchData();
+    
+    // Set up polling every 30 seconds
+    const intervalId = setInterval(fetchData, 30000);
+    
+    // Clean up interval on component unmount
+    return () => clearInterval(intervalId);
   }, []);
 
-  if (loading) return (
-    <div className="flex items-center justify-center min-h-screen">
-      <div className="text-xl font-semibold">Loading vehicle positions...</div>
-    </div>
-  );
+  if (loading) {
+    return (
+      <div className="p-4">
+        <h1 className="text-2xl font-bold mb-4">Vehicle Positions</h1>
+        <p>Loading vehicle positions...</p>
+      </div>
+    );
+  }
 
-  if (error) return (
-    <div className="p-4 m-4 bg-red-100 border border-red-400 text-red-700 rounded">
-      <h2 className="font-bold mb-2">Error Loading Data</h2>
-      <p>{error}</p>
-    </div>
-  );
+  if (error) {
+    return (
+      <div className="p-4">
+        <h1 className="text-2xl font-bold mb-4">Vehicle Positions</h1>
+        <p className="text-red-600">Error: {error}</p>
+        <p>Please try refreshing the page</p>
+      </div>
+    );
+  }
 
   return (
-    <div className="p-4 max-w-7xl mx-auto">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">Delhi Transit Vehicle Positions</h1>
-        {lastUpdate && (
-          <div className="text-sm text-gray-600">
-            Last updated: {lastUpdate}
-          </div>
-        )}
-      </div>
-      
-      <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-        {vehicles.map((vehicle, index) => (
-          <div key={index} className="p-4 bg-white border rounded-lg shadow hover:shadow-md transition-shadow">
-            <div className="flex justify-between items-start mb-2">
-              <h2 className="text-lg font-bold text-blue-600">{vehicle.vehicle_id}</h2>
-              <span className="px-2 py-1 bg-green-100 text-green-800 text-sm rounded-full">
-                {vehicle.speed} km/h
-              </span>
-            </div>
-            <div className="space-y-2 text-sm">
-              <p className="text-gray-600">
-                <span className="font-semibold">Trip:</span> {vehicle.trip_id}
-              </p>
-              <p className="text-gray-600">
-                <span className="font-semibold">Location:</span>
-                <br />
-                {vehicle.latitude.toFixed(4)}°N, {vehicle.longitude.toFixed(4)}°E
-              </p>
-              <p className="text-gray-600">
-                <span className="font-semibold">Bearing:</span> {vehicle.bearing}°
-              </p>
-              <p className="text-gray-500 text-xs">
-                {new Date(vehicle.timestamp).toLocaleString()}
-              </p>
-            </div>
-          </div>
-        ))}
-      </div>
+    <div className="p-4">
+      <h1 className="text-2xl font-bold mb-4">Vehicle Positions</h1>
+      {vehiclePositions.length === 0 ? (
+        <p>No vehicle positions available</p>
+      ) : (
+        <div className="overflow-x-auto">
+          <table className="min-w-full bg-white border border-gray-300">
+            <thead className="bg-gray-100">
+              <tr>
+                <th className="px-4 py-2 border">Entity ID</th>
+                <th className="px-4 py-2 border">Vehicle ID</th>
+                <th className="px-4 py-2 border">Trip ID</th>
+                <th className="px-4 py-2 border">Route ID</th>
+                <th className="px-4 py-2 border">Start Time</th>
+                <th className="px-4 py-2 border">Start Date</th>
+                <th className="px-4 py-2 border">Schedule Relationship</th>
+                <th className="px-4 py-2 border">Latitude</th>
+                <th className="px-4 py-2 border">Longitude</th>
+                <th className="px-4 py-2 border">Speed</th>
+                <th className="px-4 py-2 border">Timestamp</th>
+              </tr>
+            </thead>
+            <tbody>
+              {vehiclePositions.map((position, index) => (
+                <tr key={index} className="hover:bg-gray-50">
+                  <td className="px-4 py-2 border">{position.entity_id}</td>
+                  <td className="px-4 py-2 border">{position.vehicle_id}</td>
+                  <td className="px-4 py-2 border">{position.trip_id}</td>
+                  <td className="px-4 py-2 border">{position.route_id}</td>
+                  <td className="px-4 py-2 border">{position.start_time}</td>
+                  <td className="px-4 py-2 border">{position.start_date}</td>
+                  <td className="px-4 py-2 border">{position.schedule_relationship}</td>
+                  <td className="px-4 py-2 border">{position.latitude}</td>
+                  <td className="px-4 py-2 border">{position.longitude}</td>
+                  <td className="px-4 py-2 border">{position.speed}</td>
+                  <td className="px-4 py-2 border">{position.timestamp}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
     </div>
   );
-};
+}
 
 export default Real;

@@ -17,17 +17,17 @@
     "buffer": "^6.0.3",
     "child_process": "^1.0.2",
     "cors": "^2.8.5",
-    "csv-parser": "^3.0.0",
+    "csv-parser": "^3.1.0",
     "csv-writer": "^1.6.0",
     "express": "^4.21.2",
     "express-rate-limit": "^7.5.0",
     "json2csv": "^6.0.0-alpha.2",
-    "mongoose": "^8.8.4",
+    "mongoose": "^8.9.5",
     "multer": "^1.4.5-lts.1",
     "node-fetch": "^3.3.2",
     "nodemon": "^3.1.7",
     "papaparse": "^5.5.1",
-    "protobufjs": "^7.4.0",
+    "protobufjs": "^6.11.4",
     "xmlhttprequest": "^1.8.0"
   }
 }

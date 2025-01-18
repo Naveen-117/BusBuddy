@@ -239,39 +239,90 @@ app.post('/api/points', (req, res) => {
   app.use('/api/statistics', statisticsRoutes);
   app.use('/api/dashboard', dashboardRoutes);
   
- // index.js - Add this mock endpoint
-
-// Mock data generator function
-function generateMockVehicleData() {
-  const vehicles = [];
-  const vehicleCount = 10;
+  const createCsvWriter = require('csv-writer').createObjectCsvWriter;
+  const path = require('path');
   
-  for (let i = 0; i < vehicleCount; i++) {
-    vehicles.push({
-      vehicle_id: `DL${Math.floor(1000 + Math.random() * 9000)}`,
-      trip_id: `TRIP_${Math.floor(1000 + Math.random() * 9000)}`,
-      timestamp: new Date().toISOString(),
-      // Delhi approximate bounds
-      latitude: 28.5 + (Math.random() * 0.3),
-      longitude: 77.0 + (Math.random() * 0.3),
-      speed: Math.floor(20 + Math.random() * 40),
-      bearing: Math.floor(Math.random() * 360)
-    });
-  }
-  
-  return { vehicles };
-}
+  // Load the .proto file
 
-// Mock endpoint
-app.get("/api/vehicle-positions", (req, res) => {
-  try {
-    const mockData = generateMockVehicleData();
-    res.json(mockData);
-  } catch (error) {
-    console.error("Error generating mock data:", error);
-    res.status(500).json({ error: error.message });
+// Load the .proto file
+
+// Load and setup protobuf schema
+protobuf.load(path.join(__dirname, 'vehicle_positions.proto'), (err, root) => {
+  if (err) {
+    console.error('Error loading protobuf file:', err);
+    return;
   }
-});
+
+  const FeedMessage = root.lookupType('transit_realtime.FeedMessage');
+
+  // In index.js, modify the /api/vehicle-positions endpoint:
+  app.get('/api/vehicle-positions', async (req, res) => {
+    try {
+      console.log('Fetching vehicle positions...');
+      
+      const response = await axios({
+        url: 'https://otd.delhi.gov.in/api/realtime/VehiclePositions.pb?key=LdE6xTDPS0mjLc65Kw0sRttaz5iLUMgG',
+        method: 'GET',
+        responseType: 'arraybuffer',
+        timeout: 10000,
+        headers: {
+          'Accept-Encoding': '*'
+        }
+      });
+  
+      console.log('Received response, data length:', response.data.length);
+  
+      // Decode the protobuf message
+      const message = FeedMessage.decode(new Uint8Array(response.data));
+      const decodedMessage = FeedMessage.toObject(message, {
+        enums: String,
+        longs: String,
+        bytes: String,
+        defaults: true,
+        arrays: true,
+        objects: true,
+        oneofs: true,
+      });
+  
+      console.log('Successfully decoded protobuf message');
+  
+      // Debugging each entity
+      const entities = decodedMessage.entity;
+      entities.forEach((entity, index) => {
+        console.log(`Entity ${index + 1}:`, JSON.stringify(entity, null, 2));
+        if (!entity.vehicle) {
+          console.warn(`Entity ${entity.id || index} is missing vehicle details.`);
+        }
+        if (!entity.vehicle?.trip) {
+          console.warn(`Entity ${entity.id || index} has no trip details.`);
+        }
+        if (!entity.vehicle?.position) {
+          console.warn(`Entity ${entity.id || index} has no position details.`);
+        }
+      });
+  
+      // Map entities
+      const vehiclePositions = decodedMessage.entity.map(entity => ({
+        entity_id: entity.id || 'Unknown',
+        trip_id: entity.vehicle?.trip?.tripId || 'No Trip ID',
+        route_id: entity.vehicle?.trip?.routeId || 'No Route ID',
+        latitude: entity.vehicle?.position?.latitude || 0.0,
+        longitude: entity.vehicle?.position?.longitude || 0.0,
+        speed: entity.vehicle?.position?.speed || 0.0,
+        timestamp: entity.vehicle?.timestamp || 'No Timestamp',
+        vehicle_id: entity.vehicle?.vehicle?.id || 'No Vehicle ID',
+        vehicle_label: entity.vehicle?.vehicle?.label || 'No Label'
+      }));
+      
+  
+      console.log(`Processed ${vehiclePositions.length} vehicle positions`);
+      res.json(vehiclePositions);
+  
+    } catch (error) {
+      console.error('Error in /api/vehicle-positions:', error.message);
+      res.status(500).json({ error: 'Internal Server Error', details: error.message });
+    }
+  });
   
   
   
@@ -287,3 +338,4 @@ app.listen(3001,()=>{
 
 
 module.exports = router;
+})
