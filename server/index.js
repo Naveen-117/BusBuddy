@@ -7,11 +7,6 @@ const router = express.Router();
 const multer = require('multer');
 const csvParser = require('csv-parser');
 const fs = require('fs');
-const bodyParser = require('body-parser');
-const { Buffer } = require('buffer');
-const protobuf = require('protobufjs');
-const { parse } = require('json2csv');
-const zlib = require("zlib");
 
 
 
@@ -239,21 +234,9 @@ app.post('/api/points', (req, res) => {
   app.use('/api/statistics', statisticsRoutes);
   app.use('/api/dashboard', dashboardRoutes);
   
-  const createCsvWriter = require('csv-writer').createObjectCsvWriter;
-  const path = require('path');
   const { execFile } = require("child_process");
-  // Load the .proto file
+  
 
-// Load the .proto file
-
-// Load and setup protobuf schema
-protobuf.load(path.join(__dirname, 'vehicle_positions.proto'), (err, root) => {
-  if (err) {
-    console.error('Error loading protobuf file:', err);
-    return;
-  }
-
-  const FeedMessage = root.lookupType('transit_realtime.FeedMessage');
 
   // In index.js, modify the /api/vehicle-positions endpoint:
   app.get('/api/vehicle-positions', (req, res) => {
@@ -294,4 +277,3 @@ app.listen(3001,()=>{
 
 
 module.exports = router;
-})

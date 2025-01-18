@@ -1,19 +1,18 @@
 import React, { useState } from 'react';
-import Slide from '../components/Slide';
 import { Link } from 'react-router-dom';
+import Slide from '../components/Slide';
 
 const HomePage = () => {
-  const [hovered, setHovered] = useState(null); // State to track which button is hovered
+  const [hovered, setHovered] = useState(null);
 
   const handleMouseEnter = (button) => {
-    setHovered(button); // Set the hovered button
+    setHovered(button);
   };
 
   const handleMouseLeave = () => {
-    setHovered(null); // Reset when mouse leaves
+    setHovered(null);
   };
 
-  // Image mapping for each button
   const imageMap = {
     platform: '/Platform.png',
     planning: '/images/planning-image.jpg',
@@ -22,100 +21,85 @@ const HomePage = () => {
     map: '/images/map-image.jpg',
   };
 
+  const renderButton = (item) => {
+    const button = (
+      <button className="btn bg-teal-600 text-white py-3 px-8 rounded-full border-2 hover:bg-white hover:text-teal-600 border-teal-600 transition-all duration-300 ease-in-out font-semibold text-lg">
+        {item.toUpperCase()}
+      </button>
+    );
+
+    if (item === 'operations') {
+      return <Link to="/real">{button}</Link>;
+    } else if (item === 'map') {
+      return <Link to="/map">{button}</Link>;
+    }
+    return button;
+  };
+
   return (
-    <div className="container text-center mt-5">
-      <div className="d-flex align-items-center justify-content-center" style={{ height: '100vh' }}>
-        <div>
-          <h1
-            className="text-6xl font-extrabold text-primary"
+    <div
+      className="min-h-screen w-full flex flex-col items-center bg-teal-800 relative"
+      style={{
+        overflowY: 'auto',
+      }}
+    >
+      {/* Background Image */}
+      <div
+        className="absolute inset-0 bg-cover bg-center"
+        style={{
+          backgroundImage: 'url(/bgimage.jpg)',
+          opacity: 0.7,
+          zIndex: -1,
+        }}
+      ></div>
+
+      {/* Introduction Section */}
+      <div className="w-full bg-teal-700 text-white py-12 px-4 text-center">
+        <h1 className="text-4xl font-bold mb-4">
+          Making Public Transportation Better. Together.
+        </h1>
+        <p className="text-xl max-w-2xl mx-auto">
+          An end-to-end transportation management software for more equitable, sustainable, and efficient transportation services for agencies, operators, cities, drivers, and passengers.
+        </p>
+      </div>
+
+      {/* Slide Component */}
+      <Slide />
+
+      {/* Image Container - Always present */}
+      <div
+        className="relative flex justify-center items-center mt-8"
+        style={{
+          width: '900px',
+          height: '400px',
+          opacity: hovered ? 1 : 0,
+          transition: 'opacity 0.3s ease-in-out',
+        }}
+      >
+        {hovered && (
+          <img
+            src={imageMap[hovered]}
+            alt={hovered}
+            className="w-full h-full object-cover rounded-lg shadow-lg"
             style={{
-              textShadow: '2px 2px 8px rgba(0, 0, 0, 0.2)',
-              letterSpacing: '2px',
+              transition: 'opacity 0.3s ease-in-out',
             }}
-          >
-            BusBuddy
-          </h1>
-          <p className="mt-3 lead text-secondary">
-            Your Smart Public Transportation Companion
-          </p>
-          <Slide />
-          
-          {/* Image Box Above the Buttons with Smooth Transition */}
+          />
+        )}
+      </div>
+
+      {/* Button Group */}
+      <div className="flex justify-center flex-wrap mt-10 gap-8 pb-10">
+        {['platform', 'planning', 'scheduling', 'operations', 'map'].map((item) => (
           <div
-            className="relative"
-            style={{ marginTop: '100px', transition: 'opacity 0.3s ease-in-out', opacity: hovered ? 1 : 0 }}
+            key={item}
+            className="group relative"
+            onMouseEnter={() => handleMouseEnter(item)}
+            onMouseLeave={handleMouseLeave}
           >
-            {hovered && (
-              <div
-                className="absolute top-0 left-1/2 transform -translate-x-1/2 w-80 h-48 bg-gray-800 rounded-lg opacity-100"
-                style={{ width: '900px', height: '400px' }}
-              >
-                <img
-                  src={imageMap[hovered]} // Dynamically set image source based on the hovered button
-                  alt={hovered}
-                  className="w-full h-full object-cover rounded-lg"
-                />
-              </div>
-            )}
+            {renderButton(item)}
           </div>
-          
-          {/* Button Group Below the Image Box */}
-          <div className="flex justify-center" style={{ marginTop: '700px', gap: '50px' }}>
-            <div
-              className="group relative"
-              onMouseEnter={() => handleMouseEnter('platform')}
-              onMouseLeave={handleMouseLeave}
-            >
-              <button className="btn bg-blue-600 text-white py-2 px-4 rounded-full border-2 hover:bg-white border-blue-600 hover:text-blue-600 transition-all duration-300 ease-in-out font-semibold">
-                PLATFORM
-              </button>
-            </div>
-
-            <div
-              className="group relative"
-              onMouseEnter={() => handleMouseEnter('planning')}
-              onMouseLeave={handleMouseLeave}
-            >
-              <button className="btn bg-blue-600 text-white py-2 px-4 rounded-full border-2 hover:bg-white border-blue-600 hover:text-blue-600 transition-all duration-300 ease-in-out font-semibold">
-                PLANNING
-              </button>
-            </div>
-
-            <div
-              className="group relative"
-              onMouseEnter={() => handleMouseEnter('scheduling')}
-              onMouseLeave={handleMouseLeave}
-            >
-              <button className="btn bg-blue-600 text-white py-2 px-4 rounded-full border-2 hover:bg-white border-blue-600 hover:text-blue-600 transition-all duration-300 ease-in-out font-semibold">
-                SCHEDULING
-              </button>
-            </div>
-
-            <div
-              className="group relative"
-              onMouseEnter={() => handleMouseEnter('operations')}
-              onMouseLeave={handleMouseLeave}
-            >
-              <Link to='/real'>
-              <button className="btn bg-blue-600 text-white py-2 px-4 rounded-full border-2 hover:bg-white border-blue-600 hover:text-blue-600 transition-all duration-300 ease-in-out font-semibold">
-                OPERATIONS
-              </button>
-              </Link>
-            </div>
-
-            <div
-              className="group relative"
-              onMouseEnter={() => handleMouseEnter('map')}
-              onMouseLeave={handleMouseLeave}
-            >
-              <Link to='/map'>
-              <button className="btn bg-blue-600 text-white py-2 px-4 rounded-full border-2 hover:bg-white border-blue-600 hover:text-blue-600 transition-all duration-300 ease-in-out font-semibold">
-                MAP
-              </button>
-              </Link>
-            </div>
-          </div>
-        </div>
+        ))}
       </div>
     </div>
   );
