@@ -75,7 +75,6 @@ function Real() {
           <table className="min-w-full bg-white border border-gray-300">
             <thead className="bg-gray-100">
               <tr>
-                <th className="px-4 py-2 border">Entity ID</th>
                 <th className="px-4 py-2 border">Vehicle ID</th>
                 <th className="px-4 py-2 border">Trip ID</th>
                 <th className="px-4 py-2 border">Route ID</th>
@@ -84,14 +83,12 @@ function Real() {
                 <th className="px-4 py-2 border">Schedule Relationship</th>
                 <th className="px-4 py-2 border">Latitude</th>
                 <th className="px-4 py-2 border">Longitude</th>
-                <th className="px-4 py-2 border">Speed</th>
                 <th className="px-4 py-2 border">Timestamp</th>
               </tr>
             </thead>
             <tbody>
               {vehiclePositions.map((position, index) => (
                 <tr key={index} className="hover:bg-gray-50">
-                  <td className="px-4 py-2 border">{position.entity_id}</td>
                   <td className="px-4 py-2 border">{position.vehicle_id}</td>
                   <td className="px-4 py-2 border">{position.trip_id}</td>
                   <td className="px-4 py-2 border">{position.route_id}</td>
@@ -100,7 +97,6 @@ function Real() {
                   <td className="px-4 py-2 border">{position.schedule_relationship}</td>
                   <td className="px-4 py-2 border">{position.latitude}</td>
                   <td className="px-4 py-2 border">{position.longitude}</td>
-                  <td className="px-4 py-2 border">{position.speed}</td>
                   <td className="px-4 py-2 border">{position.timestamp}</td>
                 </tr>
               ))}
