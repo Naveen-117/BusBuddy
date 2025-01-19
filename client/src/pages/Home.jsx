@@ -4,14 +4,14 @@ import Bus from '../components/Slide';
 import { TrendingUp, Clock, MapPin, Shield } from 'lucide-react';
 
 const HomePage = () => {
-  const [hovered, setHovered] = useState(null);
+  const [hovered, setHovered] = useState('statistics');
   
   const handleMouseEnter = (button) => {
     setHovered(button);
   };
 
   const handleMouseLeave = () => {
-    setHovered(null);
+    setHovered('statistics');
   };
 
   const quotes = [
@@ -150,20 +150,18 @@ const HomePage = () => {
         style={{
           width: '900px',
           height: '400px',
-          opacity: hovered ? 1 : 0,
+          opacity: 1,
           transition: 'opacity 0.3s ease-in-out',
         }}
       >
-        {hovered && (
-          <img
-            src={imageMap[hovered]}
-            alt={hovered}
-            className="w-full h-full object-cover rounded-lg shadow-lg"
-            style={{
-              transition: 'opacity 0.3s ease-in-out',
-            }}
-          />
-        )}
+        <img
+          src={imageMap[hovered]}
+          alt={hovered}
+          className="w-full h-full object-cover rounded-lg shadow-lg"
+          style={{
+            transition: 'opacity 0.3s ease-in-out',
+          }}
+        />
       </div>
 
       {/* Button Group */}

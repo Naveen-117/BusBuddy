@@ -8,7 +8,7 @@ const Navbar = () => {
         {/* Left Section: Logo and App Name */}
         <div className="flex items-center">
           <img
-            src="" // Add your logo path here
+            src="./logo.png" // Add your logo path here
             alt="logo"
             className="h-[50px] w-[50px] object-contain"
           />
