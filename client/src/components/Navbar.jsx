@@ -31,12 +31,7 @@ const Navbar = () => {
               Home
             </li>
           </Link>
-          <Link to="/Dash">
-            <li className="text-white font-semibold text-sm px-3 py-2 hover:text-teal-300">
-              Statistics
-            </li>
-          </Link>
-          <Link to="/">
+          <Link to="/about">
             <li className="text-white font-semibold text-sm px-3 py-2 hover:text-teal-300">
               About
             </li>

@@ -14,6 +14,7 @@ import StopsStats from './pages/StopsStats'
 import TripsStats from './pages/TripsStats'
 import RoutesStats from './pages/RoutesStats'
 import Real from './pages/Real'
+import AboutPage from './components/About'
 
 function App() {
   return (
@@ -33,6 +34,7 @@ function App() {
     <Route path="/trips-stats" element={<TripsStats />} />
     <Route path="/routes-stats" element={<RoutesStats />} />
     <Route path="/real" element={<Real />} />
+    <Route path="/about" element={<AboutPage />} />
     </Routes>
     </BrowserRouter>
   )
