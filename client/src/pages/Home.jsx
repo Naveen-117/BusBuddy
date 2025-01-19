@@ -65,8 +65,15 @@ const HomePage = () => {
   };
 
   const renderButton = (item) => {
+    const isHovered = hovered === item;
+    const buttonClasses = `btn ${
+      isHovered 
+        ? 'bg-white text-teal-600' 
+        : 'bg-teal-600 text-white'
+    } py-3 px-8 rounded-full border-2 hover:bg-white hover:text-teal-600 border-teal-600 transition-all duration-300 ease-in-out font-semibold text-lg`;
+
     const button = (
-      <button className="btn bg-teal-600 text-white py-3 px-8 rounded-full border-2 hover:bg-white hover:text-teal-600 border-teal-600 transition-all duration-300 ease-in-out font-semibold text-lg">
+      <button className={buttonClasses}>
         {item.toUpperCase()}
       </button>
     );
