@@ -15,6 +15,7 @@ import TripsStats from './pages/TripsStats'
 import RoutesStats from './pages/RoutesStats'
 import Real from './pages/Real'
 import AboutPage from './components/About'
+import Platform from './pages/Platform'
 
 function App() {
   return (
@@ -34,6 +35,7 @@ function App() {
     <Route path="/trips-stats" element={<TripsStats />} />
     <Route path="/routes-stats" element={<RoutesStats />} />
     <Route path="/real" element={<Real />} />
+    <Route path="/platform" element={<Platform />} />
     <Route path="/about" element={<AboutPage />} />
     </Routes>
     </BrowserRouter>

@@ -59,7 +59,7 @@ const HomePage = () => {
   const imageMap = {
     statistics: '/statistics.png',
     planning: '/planning.png',
-    scheduling: '/images/scheduling-image.jpg',
+    scheduling: '/platform.png',
     operations: '/operation.png',
     map: '/images/map-image.jpg',
   };
@@ -84,6 +84,8 @@ const HomePage = () => {
       return <Link to="/map">{button}</Link>;
     } else if (item === 'statistics') {
       return <Link to="/Dash">{button}</Link>;
+    } else if (item === 'scheduling') {
+      return <Link to="/platform">{button}</Link>;
     }
     return button;
   };
