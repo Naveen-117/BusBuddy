@@ -11,23 +11,32 @@ function Login() {
   const handleLogin = (e) => {
     e.preventDefault();
     axios
-      .post("http://localhost:3001/login", { email, password })
-      .then((result) => {
-        console.log(result);
-        if (result.data === "success") {
-          navigate("/home");
-        } else alert("Invalid Password !!!");
-      })
-      .catch((err) => {
-        console.log(err);
-        alert("Invalid Email");
-      });
-  };
+        .post("http://localhost:3001/login", { email, password })
+        .then((result) => {
+            console.log(result);
+            if (result.data.status === "success") {
+                localStorage.setItem('userId', result.data.userId);
+                // Store complete user data including avatar
+                localStorage.setItem('userData', JSON.stringify({
+                    ...result.data.user,
+                    avatar: result.data.user.avatar || "/api/placeholder/200/200"
+                }));
+                navigate("/home");
+                window.location.reload();
+            } else {
+                alert(result.data.message || "Invalid Password !!!");
+            }
+        })
+        .catch((err) => {
+            console.log(err);
+            alert("Invalid Email");
+        });
+};
 
   return (
-    <div className="min-h-screen bg-gray-900 text-gray-300 flex items-center justify-center">
+    <div className="min-h-screen bg-gradient-to-b from-teal-800 to-teal-900 text-gray-300 flex items-center justify-center">
       <div className="relative w-full max-w-md">
-        <div className="w-full bg-gray-800 shadow-lg rounded-lg overflow-hidden">
+        <div className="w-full bg-teal-800 shadow-lg rounded-lg overflow-hidden">
           <div className="flex justify-between items-center bg-gray-700 py-3 px-5">
             <h6 className="text-lg font-semibold">Log In</h6>
           </div>

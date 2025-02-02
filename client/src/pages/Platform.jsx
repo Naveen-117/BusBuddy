@@ -2,24 +2,24 @@ import React, { useState, useRef } from "react";
 
 function Platform() {
   const [blocks, setBlocks] = useState({
-    route1: [], route2: [], route3: [], route4: [],
-    route5: [], route6: [], route7: [], route8: []
+    '413UP': [], '456UP': [], '847AUP': [], '712UP': [],
+    '511ASTLUP': [], '112STLUP': [], '172AUP': [], '113STLUP': []
   });
   
   const [availableBlocks] = useState([
-    // Route 1 buses
-    { id: "Bus 1", route: "route1" }, { id: "Bus 2", route: "route1" },
-    { id: "Bus 9", route: "route1" }, { id: "Bus 10", route: "route1" },
-    { id: "Bus 11", route: "route1" }, { id: "Bus 12", route: "route1" },
-    // Route 2 buses
-    { id: "Bus 3", route: "route2" }, { id: "Bus 4", route: "route2" },
-    { id: "Bus 13", route: "route2" }, { id: "Bus 14", route: "route2" },
-    { id: "Bus 15", route: "route2" }, { id: "Bus 16", route: "route2" },
+    // 413UP buses
+    { id: "Bus 1", route: "413UP" }, { id: "Bus 2", route: "413UP" },
+    { id: "Bus 9", route: "413UP" }, { id: "Bus 10", route: "413UP" },
+    { id: "Bus 11", route: "413UP" }, { id: "Bus 12", route: "413UP" },
+    // 456UP buses
+    { id: "Bus 3", route: "456UP" }, { id: "Bus 4", route: "456UP" },
+    { id: "Bus 13", route: "456UP" }, { id: "Bus 14", route: "456UP" },
+    { id: "Bus 15", route: "456UP" }, { id: "Bus 16", route: "456UP" },
     // Add other buses similarly...
-    // Route 8 buses
-    { id: "Bus 43", route: "route8" }, { id: "Bus 44", route: "route8" },
-    { id: "Bus 45", route: "route8" }, { id: "Bus 46", route: "route8" },
-    { id: "Bus 47", route: "route8" }, { id: "Bus 48", route: "route8" }
+    // 113STLUP buses
+    { id: "Bus 43", route: "113STLUP" }, { id: "Bus 44", route: "113STLUP" },
+    { id: "Bus 45", route: "113STLUP" }, { id: "Bus 46", route: "113STLUP" },
+    { id: "Bus 47", route: "113STLUP" }, { id: "Bus 48", route: "113STLUP" }
   ]);
 
   const [isSelectionOpen, setIsSelectionOpen] = useState(false);

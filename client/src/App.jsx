@@ -15,18 +15,23 @@ import TripsStats from './pages/TripsStats'
 import RoutesStats from './pages/RoutesStats'
 import Real from './pages/Real'
 import AboutPage from './components/About'
+import Profile from './components/Profile'
 import Platform from './pages/Platform'
-
+import WeeklySchedule from './pages/WeeklySchedule'
+import TransitStopForm from './pages/TransitStopForm'
+import DriverManagement from './pages/DriverManagement'
 function App() {
   return (
     <BrowserRouter>
-    <Navbar/>
     <Routes>
     <Route path="/" element={<Login/>}></Route>
     <Route path="/signup" element={<Signup/>}></Route>
+    </Routes>
+    <Navbar/>
+    <Routes>
     <Route path="/home" element={<Home/>}></Route> 
     <Route path="/test" element={<Passenger/>}></Route> 
-    <Route path="/data" element={<CsvUploader/>}></Route>
+    <Route path="/upload" element={<TransitStopForm/>}></Route>
     <Route path="/graph" element={<Statistics/>}></Route>
     <Route path="/map" element={<Passenger/>}></Route>
     <Route path="/statistics" element={<StatisticsPage />} />
@@ -37,6 +42,9 @@ function App() {
     <Route path="/real" element={<Real />} />
     <Route path="/platform" element={<Platform />} />
     <Route path="/about" element={<AboutPage />} />
+    <Route path="/profile" element={<Profile />} />
+    <Route path="/Roaster" element={<WeeklySchedule />} />
+    <Route path="/driver" element={<DriverManagement />} />
     </Routes>
     </BrowserRouter>
   )

@@ -7,20 +7,17 @@ const router = express.Router();
 const multer = require('multer');
 const csvParser = require('csv-parser');
 const fs = require('fs');
-
+const path = require('path');
 
 
 
 
 const StopModel=require('./model/Stops')
-const Fair_AttributesModel = require("./model/Fare_Attributes");
-const Stop_TimesModel = require("./model/Stop_Times");
-const Fair_RulesModel = require("./model/Fair_Rules");
-const RoutesModel = require("./model/Routes");
-const TripsModel = require("./model/Trips");
+const TransitStop = require('./model/TransitStop');
 const bcryptjs = require('bcryptjs');
 const dashboardRoutes = require('./routes/dashboard');
 const upload = multer({ dest: 'uploads/' });
+const profileRoutes = require('./routes/profileRoutes');
 
 
 
@@ -28,6 +25,8 @@ const app=express()
 app.use(express.json())
 app.use(cors())
 app.use('/', router);
+app.use(express.urlencoded({ extended: true }));
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 
 
@@ -40,21 +39,31 @@ app.post('/register', (req, res) => {
 });
 
 app.post('/login', (req, res) => {
-    const { email, password } = req.body;
-    userModel.findOne({ email: email })
-        .then(user => {
-            if (user) {
-                const validPW = bcryptjs.compareSync(password, user.password);
-                if (validPW)
-                    res.json("success");
-                else
-                    res.json("Password incorrect");
-            } else {
-                res.json("No record exist");
-            }
-        });
+  const { email, password } = req.body;
+  userModel.findOne({ email: email })
+      .then(user => {
+          if (user) {
+              const validPW = bcryptjs.compareSync(password, user.password);
+              if (validPW) {
+                  res.json({
+                      status: "success",
+                      userId: user.id,
+                      user: {
+                          name: user.name,
+                          email: user.email,
+                          phone: user.phone,
+                          createdAt: user.createdAt,
+                          avatar: user.avatar  // Include avatar in response
+                      }
+                  });
+              } else {
+                  res.json({ status: "error", message: "Password incorrect" });
+              }
+          } else {
+              res.json({ status: "error", message: "No record exist" });
+          }
+      });
 });
-
 
 app.use(router); // Register router with express app
 
@@ -72,7 +81,7 @@ app.post('/api/points', (req, res) => {
 
   
 
-  app.post('/stops', upload.single('file'), (req, res) => {
+  /*app.post('/stops', upload.single('file'), (req, res) => {
     const filePath = req.file.path;
   
     const results = [];
@@ -188,6 +197,26 @@ app.post('/api/points', (req, res) => {
         }
       });
   });
+*/
+
+app.get('/api/transit-stops', async (req, res) => {
+  try {
+    const transitStops = await TransitStop.find();
+    res.json(transitStops);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+app.post('/api/transit-stops', async (req, res) => {
+  try {
+    const newTransitStop = new TransitStop(req.body);
+    const savedTransitStop = await newTransitStop.save();
+    res.status(201).json(savedTransitStop);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+});
 
   app.get('/graph', async (req, res) => {
     console.log("Received request for /graph");
@@ -230,9 +259,9 @@ app.post('/api/points', (req, res) => {
   
   
   
-  const statisticsRoutes = require('./routes/statistics'); 
+  /*const statisticsRoutes = require('./routes/statistics'); 
   app.use('/api/statistics', statisticsRoutes);
-  app.use('/api/dashboard', dashboardRoutes);
+  app.use('/api/dashboard', dashboardRoutes);*/
   
   const { execFile } = require("child_process");
   
@@ -263,7 +292,20 @@ app.post('/api/points', (req, res) => {
     });
   });
   
-  
+  app.use('/api/profile', profileRoutes);
+  app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+// Placeholder image endpoint
+app.get('/api/placeholder/:width/:height', (req, res) => {
+  const { width, height } = req.params;
+  // This is a simple placeholder. In production, you might want to use a service like Placeholder.com
+  res.sendFile(path.join(__dirname, 'assets', 'default-avatar.png'));
+});
+
+// Error handling middleware
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).json({ message: 'Something went wrong!', error: err.message });
+});
   
   
   
