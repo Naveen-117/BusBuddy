@@ -20,6 +20,7 @@ const RoutesModel = require("./model/Routes");
 const TripsModel = require("./model/Trips");
 const bcryptjs = require('bcryptjs');
 const dashboardRoutes = require('./routes/dashboard');
+const map = require('./routes/map');
 const upload = multer({ dest: 'uploads/' });
 
 
@@ -233,6 +234,7 @@ app.post('/api/points', (req, res) => {
   const statisticsRoutes = require('./routes/statistics'); 
   app.use('/api/statistics', statisticsRoutes);
   app.use('/api/dashboard', dashboardRoutes);
+  app.use('/api/map', map);
   
   const { execFile } = require("child_process");
   
