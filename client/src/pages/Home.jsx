@@ -81,7 +81,7 @@ const HomePage = () => {
     if (item === 'operations') {
       return <Link to="/real">{button}</Link>;
     } else if (item === 'planning') {
-      return <Link to="/map">{button}</Link>;
+      return <Link to="/planning">{button}</Link>;
     } else if (item === 'statistics') {
       return <Link to="/Dash">{button}</Link>;
     } else if (item === 'scheduling') {
