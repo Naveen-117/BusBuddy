@@ -4,7 +4,7 @@ import MarkerClusterGroup from 'react-leaflet-cluster';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import axios from 'axios';
-import { Trash2 } from 'lucide-react'; 
+import { Trash2, X } from 'lucide-react'; 
 
 // Map Controller component to handle map view updates
 const MapController = ({ center, zoom, focusedMarker }) => {
@@ -787,23 +787,41 @@ const Planning = () => {
                 </div>
               )}
               {customRouteStops.map((stop, index) => (
-                <div
-                  key={stop.locationKey || stop.stop_id || `${stop.stop_lat}-${stop.stop_lon}`}
-                  className={`p-3 mb-2 rounded-lg shadow-md cursor-pointer hover:bg-gray-200 ${
-                    index === 0 
-                      ? 'bg-green-100 border-l-4 border-green-500'
-                      : index === customRouteStops.length - 1
-                        ? 'bg-red-100 border-l-4 border-red-500'
-                        : 'bg-blue-100 border-l-4 border-blue-500'
-                  }`}
-                  onClick={() => handleSidebarStopClick(stop)}
-                >
-                  <div className="font-semibold">
-                    {index === 0 ? '🏁 Start' : index === customRouteStops.length - 1 ? '🎯 End' : `Stop ${index}`}
-                  </div>
-                  <div className="text-sm">{stop.stop_name}</div>
-                </div>
-              ))}
+  <div
+    key={stop.locationKey || stop.stop_id || `${stop.stop_lat}-${stop.stop_lon}`}
+    className={`p-3 mb-2 rounded-lg shadow-md cursor-pointer hover:bg-gray-200 ${
+      index === 0 
+        ? 'bg-green-100 border-l-4 border-green-500'
+        : index === customRouteStops.length - 1
+          ? 'bg-red-100 border-l-4 border-red-500'
+          : 'bg-blue-100 border-l-4 border-blue-500'
+    }`}
+  >
+    <div className="flex justify-between items-center">
+      <div 
+        className="flex-1" 
+        onClick={() => handleSidebarStopClick(stop)}
+      >
+        <div className="font-semibold">
+          {index === 0 ? '🏁 Start' : index === customRouteStops.length - 1 ? '🎯 End' : `Stop ${index}`}
+        </div>
+        <div className="text-sm">{stop.stop_name}</div>
+      </div>
+      <button
+        onClick={(e) => {
+          e.stopPropagation();
+          const newStops = [...customRouteStops];
+          newStops.splice(index, 1);
+          setCustomRouteStops(newStops);
+        }}
+        className="text-gray-500 hover:text-red-500 p-1 rounded-full"
+        title="Remove Stop"
+      >
+        <X size={18} />
+      </button>
+    </div>
+  </div>
+))}
             </>
           ) : (
             <>

@@ -11,7 +11,7 @@ const fs = require('fs');
 
 
 
-
+const FDIMTS = require('./model/fdimts.model');
 const StopModel=require('./model/Stops')
 const Fair_AttributesModel = require("./model/Fare_Attributes");
 const Stop_TimesModel = require("./model/Stop_Times");
@@ -21,6 +21,7 @@ const TripsModel = require("./model/Trips");
 const bcryptjs = require('bcryptjs');
 const dashboardRoutes = require('./routes/dashboard');
 const map = require('./routes/map');
+const stoptimes = require('./routes/stoptimes');
 const upload = multer({ dest: 'uploads/' });
 
 
@@ -60,16 +61,7 @@ app.post('/login', (req, res) => {
 app.use(router); // Register router with express app
 
 
-let points = [];
 
-app.get('/api/points', (req, res) => {
-  res.json(points);
-});
-
-app.post('/api/points', (req, res) => {
-  points = req.body;
-  res.status(200).send('Points updated');
-});
 
   
 
@@ -93,6 +85,7 @@ app.post('/api/points', (req, res) => {
   });
 
   
+
 
   app.post('/stop_times', upload.single('file'), (req, res) => {
     const filePath = req.file.path;
@@ -235,38 +228,201 @@ app.post('/api/points', (req, res) => {
   app.use('/api/statistics', statisticsRoutes);
   app.use('/api/dashboard', dashboardRoutes);
   app.use('/api/map', map);
+  app.use('/api', stoptimes);
   
   const { execFile } = require("child_process");
   
 
 
   // In index.js, modify the /api/vehicle-positions endpoint:
-  app.get('/api/vehicle-positions', (req, res) => {
-    console.log("Fetching vehicle positions using Python script...");
+  // In index.js - Improve vehicle positions endpoint
+app.get('/api/vehicle-positions', (req, res) => {
+  console.log("Fetching vehicle positions using Python script...");
+
+  // Call the Python script with increased timeout
+  execFile("python", ["vehicle_positions.py"], { timeout: 15000 }, (error, stdout, stderr) => {
+    if (error) {
+      console.error("Error executing Python script:", error.message);
+      res.status(500).json({ error: "Internal Server Error", details: error.message });
+      return;
+    }
+    if (stderr) {
+      console.error("Python script error output:", stderr);
+    }
+
+    try {
+      const data = JSON.parse(stdout); // Parse JSON output from the script
+      
+      // Add server timestamp to know when the data was fetched
+      const responseData = Array.isArray(data) ? data.map(vehicle => ({
+        ...vehicle,
+        server_fetch_time: Math.floor(Date.now() / 1000)
+      })) : data;
+      
+      res.json(responseData); // Send the data to the frontend
+    } catch (parseError) {
+      console.error("Error parsing Python script output:", parseError.message);
+      res.status(500).json({ error: "Internal Server Error", details: parseError.message });
+    }
+  });
+});
   
-    // Call the Python script
-    execFile("python3", ["vehicle_positions.py"], (error, stdout, stderr) => {
-      if (error) {
-        console.error("Error executing Python script:", error.message);
-        res.status(500).json({ error: "Internal Server Error", details: error.message });
-        return;
-      }
-      if (stderr) {
-        console.error("Python script error output:", stderr);
-      }
+  app.get('/api/stats/overview', async (req, res) => {
+    try {
+      const totalRoutes = await FDIMTS.distinct('route_id').countDocuments();
+      const totalStops = await FDIMTS.distinct('stop_id').countDocuments();
+      const agencies = await FDIMTS.distinct('agency_id');
+      const avgDistance = await FDIMTS.aggregate([
+        { $group: { _id: null, avg: { $avg: "$distance_to_next_stop" } } }
+      ]);
   
-      try {
-        const data = JSON.parse(stdout); // Parse JSON output from the script
-        res.json(data); // Send the data to the frontend
-      } catch (parseError) {
-        console.error("Error parsing Python script output:", parseError.message);
-        res.status(500).json({ error: "Internal Server Error", details: parseError.message });
-      }
-    });
+      res.json({
+        totalRoutes,
+        totalStops,
+        totalAgencies: agencies.length,
+        avgDistance: avgDistance[0]?.avg?.toFixed(2) || 0
+      });
+    } catch (err) {
+      res.status(500).json({ message: err.message });
+    }
+  });
+  
+  
+  app.get('/api/stats/routes', async (req, res) => {
+    try {
+      const routesByAgency = await FDIMTS.aggregate([
+        { $group: { _id: "$agency_id", count: { $sum: 1 } } }
+      ]);
+  
+      const stopsByZone = await FDIMTS.aggregate([
+        { $group: { _id: "$zone", count: { $sum: 1 } } }
+      ]);
+  
+      res.json({ routesByAgency, stopsByZone });
+    } catch (err) {
+      res.status(500).json({ message: err.message });
+    }
   });
   
   
   
+  app.get('/api/stats/times', async (req, res) => {
+    try {
+      // Log sample arrival_time values for debugging
+      const times = await FDIMTS.find({}, { arrival_time: 1, _id: 0 }).limit(10);
+      console.log('Sample arrival_time values:', times);
+  
+      const timeDistribution = await FDIMTS.aggregate([
+        {
+          $addFields: {
+            // Fix invalid times (e.g., 24:02:04 -> 00:02:04)
+            fixedArrivalTime: {
+              $let: {
+                vars: {
+                  hours: { $toInt: { $substr: ["$arrival_time", 0, 2] } },
+                  minutes: { $substr: ["$arrival_time", 3, 2] },
+                  seconds: { $substr: ["$arrival_time", 6, 2] }
+                },
+                in: {
+                  $cond: {
+                    if: { $gte: ["$$hours", 24] }, // Check if hours >= 24
+                    then: { $concat: ["00", ":", "$$minutes", ":", "$$seconds"] }, // Convert to 00:MM:SS
+                    else: "$arrival_time" // Use as-is if valid
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          $project: {
+            hour: {
+              $hour: {
+                $dateFromString: {
+                  dateString: {
+                    $concat: ["1970-01-01 ", "$fixedArrivalTime"] // Add a dummy date
+                  },
+                  format: "%Y-%m-%d %H:%M:%S"
+                }
+              }
+            }
+          }
+        },
+        {
+          $group: {
+            _id: "$hour",
+            count: { $sum: 1 }
+          }
+        },
+        { $sort: { _id: 1 } }
+      ]);
+  
+      // Handle empty results
+      const formattedResults = timeDistribution.length > 0 
+        ? timeDistribution 
+        : Array.from({ length: 24 }, (_, i) => ({ _id: i, count: 0 }));
+  
+      res.json(formattedResults);
+    } catch (err) {
+      console.error('Error in /api/stats/times:', err);
+      res.status(500).json({ 
+        error: 'Failed to fetch time data',
+        details: err.message
+      });
+    }
+  });
+  
+  app.get('/api/stops', async (req, res) => {
+    try {
+      const { limit = 5000 } = req.query; // Default: return 5000 stops to prevent overload
+      const stops = await FDIMTS.find({}, { 
+        stop_name: 1, stop_lat: 1, stop_lon: 1, route_long_name: 1, arrival_time: 1 
+      }).limit(parseInt(limit));
+  
+      res.json({ stops });
+    } catch (error) {
+      console.error("Error fetching stops:", error);
+      res.status(500).json({ error: "Internal Server Error" });
+    }
+  });
+  
+  
+  
+  app.get("/api/routes", async (req, res) => {
+    try {
+      const routes = await FDIMTS.distinct("route_id");
+      res.json(routes);
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
+  });
+  
+  app.get("/api/stops", async (req, res) => {
+    try {
+      const stops = await FDIMTS.distinct("stop_id");
+      res.json(stops);
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
+  });
+  
+  app.get("/api/trips", async (req, res) => {
+    try {
+      const trips = await FDIMTS.distinct("trip_id");
+      res.json(trips);
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
+  });
+  
+  app.get("/api/agencies", async (req, res) => {
+    try {
+      const agencies = await FDIMTS.distinct("agency_id");
+      res.json(agencies);
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
+  });
   
   
   

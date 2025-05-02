@@ -60,8 +60,7 @@ const HomePage = () => {
     statistics: '/statistics.png',
     planning: '/planning.png',
     scheduling: '/platform.png',
-    operations: '/operation.png',
-    map: '/images/map-image.jpg',
+    operations: '/operation.png'
   };
 
   const renderButton = (item) => {
@@ -79,14 +78,14 @@ const HomePage = () => {
     );
 
     if (item === 'operations') {
-      return <Link to="/real">{button}</Link>;
+      return <Link to="/live">{button}</Link>;
     } else if (item === 'planning') {
       return <Link to="/planning">{button}</Link>;
     } else if (item === 'statistics') {
-      return <Link to="/Dash">{button}</Link>;
+      return <Link to="/dashboard">{button}</Link>;
     } else if (item === 'scheduling') {
       return <Link to="/platform">{button}</Link>;
-    }
+    } 
     return button;
   };
 
