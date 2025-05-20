@@ -78,7 +78,11 @@ const HomePage = () => {
     );
 
     if (item === 'operations') {
+<<<<<<< HEAD
       return <Link to="/live">{button}</Link>;
+=======
+      return <Link to="/driver">{button}</Link>;
+>>>>>>> 9f73a69ce2de0abcbb2b7337b0d45578d9acb51d
     } else if (item === 'planning') {
       return <Link to="/planning">{button}</Link>;
     } else if (item === 'statistics') {

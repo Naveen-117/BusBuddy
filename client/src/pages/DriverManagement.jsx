@@ -12,16 +12,24 @@ const generateUniqueDrivers = (count) => {
 
 const generateRandomStatus = () => {
   const random = Math.random();
+<<<<<<< HEAD
   if (random < 0.7) return 'RUNNING';
+=======
+  if (random < 0.8) return 'RUNNING';
+>>>>>>> 9f73a69ce2de0abcbb2b7337b0d45578d9acb51d
   if (random < 0.9) return 'READY';
   return 'LATE';
 };
 
+<<<<<<< HEAD
 const generateRandomBusNumber = () => {
   // Generate bus numbers in the format BUS-123
   return `BUS-${Math.floor(Math.random() * 900) + 100}`;
 };
 
+=======
+const generateRandomBlock = () => (Math.random() < 0.2 ? 'YES' : 'NO');
+>>>>>>> 9f73a69ce2de0abcbb2b7337b0d45578d9acb51d
 const generateRandomColor = () => {
   const colors = ['bg-purple-500', 'bg-pink-500', 'bg-indigo-500', 'bg-blue-500', 'bg-green-500', 'bg-yellow-500', 'bg-orange-500'];
   return colors[Math.floor(Math.random() * colors.length)];
@@ -73,7 +81,11 @@ const DriverRow = ({ row, index, onDropDriver }) => {
         </div>
       </td>
       <td className={`border p-3 ${getStatusColor(row.status)}`}>{row.status}</td>
+<<<<<<< HEAD
       <td className="border p-3 text-white">{row.busNumber}</td>
+=======
+      <td className="border p-3 text-white">{row.block}</td>
+>>>>>>> 9f73a69ce2de0abcbb2b7337b0d45578d9acb51d
     </tr>
   );
 };
@@ -84,6 +96,7 @@ const DriverManagement = () => {
   useEffect(() => {
     const generateInitialRows = () => {
       const drivers = generateUniqueDrivers(10);
+<<<<<<< HEAD
       const generatedRows = [];
       
       // First, create rows with drivers
@@ -123,11 +136,27 @@ const DriverManagement = () => {
       return generatedRows;
     };
     
+=======
+      return drivers.map((driver) => {
+        if (Math.random() < 0.3) {
+          return { driver: 'MISSING DRIVER', status: '', block: '', iconColor: '' };
+        } else {
+          return {
+            driver,
+            status: generateRandomStatus(),
+            block: generateRandomBlock(),
+            iconColor: generateRandomColor(),
+          };
+        }
+      });
+    };
+>>>>>>> 9f73a69ce2de0abcbb2b7337b0d45578d9acb51d
     setRows(generateInitialRows());
   }, []);
 
   const handleDropDriver = (dragIndex, dropIndex) => {
     setRows((prevRows) => {
+<<<<<<< HEAD
       // Check if the dragged driver has a READY status
       if (prevRows[dragIndex].status !== 'READY') {
         return prevRows; // Don't allow non-READY drivers to be assigned
@@ -147,18 +176,27 @@ const DriverManagement = () => {
         busNumber: busNumber
       };
       newRows[dragIndex] = { driver: 'ASSIGNED', status: '', busNumber: '', iconColor: '' };
+=======
+      const newRows = [...prevRows];
+      newRows[dropIndex] = { ...newRows[dragIndex], status: 'RUNNING' };
+      newRows[dragIndex] = { driver: 'ASSIGNED', status: '', block: '', iconColor: '' };
+>>>>>>> 9f73a69ce2de0abcbb2b7337b0d45578d9acb51d
       return newRows;
     });
   };
 
+<<<<<<< HEAD
   // Calculate statistics for the UI
   const missingDriversCount = rows.filter(row => row.driver === 'MISSING DRIVER').length;
   const readyDriversCount = rows.filter(row => row.status === 'READY').length;
 
+=======
+>>>>>>> 9f73a69ce2de0abcbb2b7337b0d45578d9acb51d
   return (
     <DndProvider backend={HTML5Backend}>
       <div className="p-8 bg-teal-700 min-h-screen">
         <div className="mb-8 text-2xl font-bold text-black">Driver Management System</div>
+<<<<<<< HEAD
         
         <div className="mb-6 flex space-x-6">
           <div className="bg-gray-800 p-3 rounded-lg shadow-lg text-white">
@@ -169,12 +207,18 @@ const DriverManagement = () => {
           </div>
         </div>
         
+=======
+>>>>>>> 9f73a69ce2de0abcbb2b7337b0d45578d9acb51d
         <table className="min-w-full border border-black rounded-lg shadow-lg overflow-hidden">
           <thead>
             <tr className="bg-black">
               <th className="border p-3 text-left text-white">DRIVER</th>
               <th className="border p-3 text-left text-white">STATUS</th>
+<<<<<<< HEAD
               <th className="border p-3 text-left text-white">BUS NUMBER</th>
+=======
+              <th className="border p-3 text-left text-white">BLOCK</th>
+>>>>>>> 9f73a69ce2de0abcbb2b7337b0d45578d9acb51d
             </tr>
           </thead>
           <tbody>
@@ -184,8 +228,13 @@ const DriverManagement = () => {
           </tbody>
         </table>
         <div className="mt-8 text-sm text-white bg-gray-800 p-4 rounded-lg shadow-sm">
+<<<<<<< HEAD
           <div className="font-bold mb-2">Instructions:</div>
           <ul className="list-disc ml-5">
+=======
+          Instruction:
+          <ul className="list-disc ml-5 mt-2">
+>>>>>>> 9f73a69ce2de0abcbb2b7337b0d45578d9acb51d
             <li>Drag a 'READY' driver and drop onto a 'MISSING DRIVER' slot to assign</li>
           </ul>
         </div>

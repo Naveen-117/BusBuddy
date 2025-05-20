@@ -93,11 +93,35 @@ const RouteRow = React.memo(({
 });
 
 function Platform() {
+<<<<<<< HEAD
   const [blocks, setBlocks] = useState({});
   const [routes, setRoutes] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [routeDemands, setRouteDemands] = useState({});
   
+=======
+  const [blocks, setBlocks] = useState({
+    '413UP': [], '456UP': [], '847AUP': [], '712UP': [],
+    '511ASTLUP': [], '112STLUP': [], '172AUP': [], '113STLUP': []
+  });
+  
+  const [availableBlocks] = useState([
+    // 413UP buses
+    { id: "Bus 1", route: "413UP" }, { id: "Bus 2", route: "413UP" },
+    { id: "Bus 9", route: "413UP" }, { id: "Bus 10", route: "413UP" },
+    { id: "Bus 11", route: "413UP" }, { id: "Bus 12", route: "413UP" },
+    // 456UP buses
+    { id: "Bus 3", route: "456UP" }, { id: "Bus 4", route: "456UP" },
+    { id: "Bus 13", route: "456UP" }, { id: "Bus 14", route: "456UP" },
+    { id: "Bus 15", route: "456UP" }, { id: "Bus 16", route: "456UP" },
+    // Add other buses similarly...
+    // 113STLUP buses
+    { id: "Bus 43", route: "113STLUP" }, { id: "Bus 44", route: "113STLUP" },
+    { id: "Bus 45", route: "113STLUP" }, { id: "Bus 46", route: "113STLUP" },
+    { id: "Bus 47", route: "113STLUP" }, { id: "Bus 48", route: "113STLUP" }
+  ]);
+
+>>>>>>> 9f73a69ce2de0abcbb2b7337b0d45578d9acb51d
   const [isSelectionOpen, setIsSelectionOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedBlock, setSelectedBlock] = useState(null);
