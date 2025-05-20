@@ -1,18 +1,24 @@
+# In vehicle_positions.py
 import requests
 from google.transit import gtfs_realtime_pb2
 from google.protobuf.json_format import MessageToDict
 import json
+import time
 
 # URL to fetch vehicle positions
 URL = "https://otd.delhi.gov.in/api/realtime/VehiclePositions.pb?key=LdE6xTDPS0mjLc65Kw0sRttaz5iLUMgG"
 
 def fetch_vehicle_positions():
     try:
+        fetch_start_time = time.time()
         response = requests.get(URL, timeout=10)
         response.raise_for_status()
         vehicle_positions = gtfs_realtime_pb2.FeedMessage()
         vehicle_positions.ParseFromString(response.content)
         data = []
+
+        feed_header = vehicle_positions.header
+        feed_timestamp = feed_header.timestamp if feed_header.HasField("timestamp") else None
 
         for entity in vehicle_positions.entity:
             vehicle_data = entity.vehicle
@@ -32,6 +38,8 @@ def fetch_vehicle_positions():
                 "longitude": getattr(position, "longitude", None) if position else None,
                 "speed": getattr(position, "speed", None) if position else None,
                 "timestamp": getattr(vehicle_data, "timestamp", None),
+                "feed_timestamp": feed_timestamp,
+                "fetch_time": fetch_start_time
             })
         
         return data

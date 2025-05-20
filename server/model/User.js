@@ -25,6 +25,10 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    avatar: {
+      type: String,
+      default: "/api/placeholder/200/200"
+    }
   },
   { timestamps: true }
 );

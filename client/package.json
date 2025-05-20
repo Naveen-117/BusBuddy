@@ -1,39 +1,53 @@
 {
-  "name": "client",
-  "private": true,
-  "version": "0.0.0",
-  "type": "module",
+  "name": "server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "lint": "eslint .",
-    "preview": "vite preview"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "npx nodemon index.js"
   },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
   "dependencies": {
+<<<<<<< HEAD
     "@fortawesome/fontawesome-free": "^6.7.1",
+    "@headlessui/react": "^2.2.0",
+    "@heroicons/react": "^2.2.0",
+    "@mapbox/polyline": "^1.2.1",
     "@radix-ui/react-slot": "^1.1.1",
+=======
+>>>>>>> 9f73a69ce2de0abcbb2b7337b0d45578d9acb51d
     "@react-google-maps/api": "^2.20.3",
-    "@tanstack/react-table": "^8.20.6",
     "axios": "^1.7.9",
     "bcryptjs": "^2.4.3",
-    "bootstrap": "^5.3.3",
     "buffer": "^6.0.3",
-    "chart.js": "^4.4.7",
-    "chartjs-adapter-date-fns": "^3.0.0",
-    "class-variance-authority": "^0.7.1",
-    "clsx": "^2.1.1",
-    "crypto-js": "^4.2.0",
-    "csv-stringify": "^6.5.2",
-    "leaflet": "^1.9.4",
-    "lucide-react": "^0.471.2",
+    "child_process": "^1.0.2",
+    "cors": "^2.8.5",
+    "csv-parser": "^3.1.0",
+    "csv-writer": "^1.6.0",
+    "express": "^4.21.2",
+    "express-rate-limit": "^7.5.0",
+    "json2csv": "^6.0.0-alpha.2",
+    "mongoose": "^8.9.5",
+    "multer": "^1.4.5-lts.1",
+    "node-fetch": "^3.3.2",
+    "nodemon": "^3.1.7",
     "papaparse": "^5.5.1",
+<<<<<<< HEAD
     "process": "^0.11.10",
     "protobufjs": "^7.4.0",
     "react": "^18.3.1",
     "react-chartjs-2": "^5.3.0",
+    "react-dnd": "^16.0.1",
+    "react-dnd-html5-backend": "^16.0.1",
     "react-dom": "^18.3.1",
     "react-leaflet": "^4.2.1",
+    "react-leaflet-cluster": "^2.1.0",
     "react-router-dom": "^7.0.2",
+    "recharts": "^2.15.1",
+    "shadcn-ui": "^0.9.4",
     "stream-browserify": "^3.0.0",
     "swiper": "^11.1.15",
     "tailwind-merge": "^2.6.0",
@@ -55,5 +69,9 @@
     "react-app-rewired": "^2.2.1",
     "tailwindcss": "^3.4.16",
     "vite": "^6.0.1"
+=======
+    "protobufjs": "^6.11.4",
+    "xmlhttprequest": "^1.8.0"
+>>>>>>> 9f73a69ce2de0abcbb2b7337b0d45578d9acb51d
   }
 }

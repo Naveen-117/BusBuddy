@@ -1,4 +1,4 @@
-const RoutesModel = require('../model/Routes');
+/*const RoutesModel = require('../model/Routes');
 const StopsModel = require('../model/Stops');
 const TripsModel = require('../model/Trips');
 const StopTimesModel = require('../model/Stop_Times');
@@ -113,7 +113,7 @@ exports.getRoutesStats = async (req, res) => {
     }
 };
 
-exports.getStopsStats = async (req, res) => {
+/*exports.getStopsStats = async (req, res) => {
     try {
         const stopStats = await StopTimesModel.aggregate([
             { $group: { _id: "$stop_id", count: { $sum: 1 } } },
@@ -145,3 +145,4 @@ exports.getTripsStats = async (req, res) => {
         res.status(500).json({ message: "Server error" });
     }
 };
+*/
