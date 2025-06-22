@@ -29,9 +29,6 @@
 4. **Operations Platform** – Live vehicle & crew monitoring  
 5. **Statistics Platform** – Analytical dashboards and trend tracking
 
-## 📷 Screenshots
-
-*(Add images showing key UI parts like live tracking map, route editor, or analytics dashboards)*
 
 ## ⚙️ Installation
 
